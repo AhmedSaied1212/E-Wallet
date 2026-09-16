@@ -21,7 +21,7 @@ const createWallet = async ({ name, currency, bankName, userId }) => {
 
 };
 
-const getMywallets = async (userId) => {
+const getUserWallets = async (userId) => {
     const required = validation.requireFields(
     [userId],
         "User id are required",
@@ -29,7 +29,7 @@ const getMywallets = async (userId) => {
 
     if (required) throw new AppError(required, 400);
 
-    const wallets = await repository.fetchMyWallets(userId);
+    const wallets = await repository.fetchUserWallets(userId);
 
     return wallets;
 };
@@ -37,7 +37,9 @@ const getMywallets = async (userId) => {
 const getWalletById = async (id, userId) => {
     const wallet = await repository.fetchWalletById(id);
 
-    if (wallet.user_id !== userId) throw new AppError("You can't see a wallet belong to another user", 403);
+    if (!wallet) throw new AppError("Wallet not found.", 404);
+
+    if (wallet.user_id !== userId) throw new AppError("You can't see a wallet belonging to another user", 403);
 
     return wallet;
 };
@@ -67,9 +69,9 @@ const updateWalletStatus = async ({ id, status, userId }) => {
         "Wallet id, status and user id are required",
     );
 
-    validation.validateWalletStatus(status);
-
     if (required) throw new AppError(required, 400);
+
+    validation.validateWalletStatus(status);
     
     const wallet = await repository.fetchWalletById(id);
 
@@ -84,7 +86,7 @@ const updateWalletStatus = async ({ id, status, userId }) => {
 
 module.exports = {
     createWallet,
-    getMywallets,
+    getUserWallets,
     getWalletById,
     updateWalletName,
     updateWalletStatus

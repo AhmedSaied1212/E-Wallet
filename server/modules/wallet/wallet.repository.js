@@ -11,7 +11,7 @@ const newWallet = async ({ name, currency, bankName, userId }) => {
     return rows[0];
 };
 
-const fetchMyWallets = async (userId) => {
+const fetchUserWallets = async (userId) => {
     const { rows } = await db.query(`
         SELECT *   
         FROM wallets
@@ -57,7 +57,7 @@ const editWalletStatus = async (id, status) => {
 
 module.exports = {
     newWallet,
-    fetchMyWallets,
+    fetchUserWallets,
     fetchWalletById,
     editWalletName,
     editWalletStatus

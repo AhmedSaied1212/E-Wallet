@@ -6,6 +6,9 @@ dotenv.config();
 
 const authRoutes = require("./modules/auth/auth.routes");
 const walletRoutes = require("./modules/wallet/wallet.routes");
+const transactionRoutes = require("./modules/transaction/transaction.routes");
+const transferRoutes = require("./modules/transfer/transfer.routes");
+const usersRoutes = require("./modules/users/users.routes");
 
 const cookieParser = require("cookie-parser");
 const errorHandler = require("./middlewares/errorHandler");
@@ -20,22 +23,32 @@ app.use(cookieParser());
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:3000",
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
-app.use(cors({
-    origin: function (origin, callback) {
+const corsOptions = {
+    origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
-        } else {
-            callback(null, true); // Allow during local development
+            return;
         }
+
+        console.warn(`[CORS] Blocked origin: ${origin}`);
+        callback(null, false);
     },
-    credentials: true
-}));
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Accept"],
+};
+
+app.use(cors(corsOptions));
 
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/wallets", walletRoutes);
+app.use("/api/v1", walletRoutes);
+app.use("/api/v1/users", usersRoutes);
+app.use("/api/v1", transactionRoutes);
+app.use("/api/v1", transferRoutes);
 
 app.use(errorHandler);
 

@@ -23,11 +23,23 @@ const createWallet = appHandler( async (req, res) => {
 const getMywallets = appHandler( async (req, res) => {
     const userId = req.user.id;
 
-    const wallets = await walletService.getMywallets(userId);
+    const wallets = await walletService.getUserWallets(userId);
 
     res.status(200).json({
         success: true,
         message: "Your wallets fetched successfully.",
+        data: wallets
+    });
+});
+
+const getUserwallets = appHandler( async (req, res) => {
+    const { userId } = req.params;
+
+    const wallets = await walletService.getUserWallets(userId);
+
+    res.status(200).json({
+        success: true,
+        message: "User wallets fetched successfully.",
         data: wallets
     });
 });
@@ -89,6 +101,7 @@ const updateWalletStatus = appHandler( async (req, res) => {
 module.exports = {
     createWallet,
     getMywallets,
+    getUserwallets,
     getWalletById,
     updateWalletName,
     updateWalletStatus

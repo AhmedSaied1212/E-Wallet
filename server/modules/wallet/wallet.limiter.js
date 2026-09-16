@@ -12,6 +12,12 @@ const getMyWalletsLimiter = createLimiter({
 	error: "Too many wallet list requests. Please try again later.",
 });
 
+const getUserwalletsLimiter = createLimiter({
+	windowMs: 15 * 60 * 1000,
+	max: 60,
+	error: "Too many wallet list requests. Please try again later.",
+});
+
 const getWalletByIdLimiter = createLimiter({
 	windowMs: 15 * 60 * 1000,
 	max: 120,
@@ -32,6 +38,7 @@ const updateWalletStatusLimiter = createLimiter({
 
 module.exports = {
 	createWalletLimiter,
+	getUserwalletsLimiter,
 	getMyWalletsLimiter,
 	getWalletByIdLimiter,
 	updateWalletNameLimiter,
